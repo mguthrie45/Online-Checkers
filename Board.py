@@ -15,6 +15,11 @@ class Piece:
                 pos.append((r - 1, c - 1))
             if c < 7:
                 pos.append((r - 1, c + 1))
+        '''if self.is_king and r < 7:
+            if c > 0:
+                pos.append((r + 1, c - 1))
+            if c < 7:
+                pos.append((r + 1, c + 1))'''
         return pos
 
     def get_elim_path(self, board, from_pos, to_pos):
@@ -147,3 +152,12 @@ class Board:
             piece = self.board[pos]
             self.board[pos] = None
             piece.cap = True
+
+def update_kings_by_position(board):
+    for pos in board.board:
+        piece = board.board[pos]
+        if isinstance(piece, Piece):
+            if piece.red and piece.pos[0] == 0:
+                piece.is_king = True
+            elif not piece.red and piece.pos[0] == 7:
+                piece.is_king = True

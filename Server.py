@@ -73,6 +73,8 @@ class ServerInstance:
                             self.players[1].moved_kills = []
                             self.players[1].moved_pos = None
 
+                    update_kings_by_position(self.board)
+
                     game_state = {
                         'self': self.players[id],
                         'board': self.board if id == 0 else self.board.reverse()
