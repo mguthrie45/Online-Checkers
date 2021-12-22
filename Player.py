@@ -43,7 +43,7 @@ class Player:
 
     def is_legal_move(self, to_pos):
         for move in self.locked_possible_moves:
-            if to_pos == move['to'][-1]:
+            if move['to'] and to_pos == move['to'][-1]:
                 return True, move['kill']
         return False, None
 
@@ -65,6 +65,7 @@ class Player:
         x, y = mouse_pos
         tr, tc = y // board.cell_h, x // board.cell_w
         legal, kills = self.is_legal_move((tr, tc))
+        print(kills)
         if legal:
             self.moved_kills = kills
             self.moved_piece = self.locked_piece

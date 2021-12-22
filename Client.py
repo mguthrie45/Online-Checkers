@@ -32,7 +32,6 @@ def main():
                 mouse_pos = pygame.mouse.get_pos()
                 player_self.handle_clicks(board, mouse_pos)
 
-        send_state = player_self
         game_state = send_self_to_server(net, player_self)
         player_self, board = game_state['self'], game_state['board']
 

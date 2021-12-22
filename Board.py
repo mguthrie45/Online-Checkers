@@ -100,10 +100,13 @@ class Board:
         pieces = set()
         for r, c in self.board:
             comp_pos = (7-r, 7-c)
-            board[comp_pos] = self.board[(r, c)]
-            if isinstance(board[comp_pos], Piece):
-                comp_piece = Piece(board[comp_pos].red, board[comp_pos].is_king, comp_pos, board[comp_pos].cap)
+            piece = self.board[(r, c)]
+            if isinstance(piece, Piece):
+                comp_piece = Piece(piece.red, piece.is_king, comp_pos, piece.cap)
+                board[comp_pos] = comp_piece
                 pieces.add(comp_piece)
+            else:
+                board[comp_pos] = None
         return Board(self.w, self.h, board, pieces)
 
 
