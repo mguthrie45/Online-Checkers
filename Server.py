@@ -5,7 +5,8 @@ import _thread
 from Player import *
 from Board import *
 
-WIDTH, HEIGHT = 500, 500
+SWIDTH, SHEIGHT = 720, 640
+WIDTH, HEIGHT = 496, 496
 
 def update_player_locks(player, uplayer):
     player.locked_piece = uplayer.locked_piece
@@ -16,7 +17,7 @@ class ServerInstance:
     ADDR = "192.168.56.1"
     PORT = 5555
     def __init__(self):
-        self.board = Board(WIDTH, HEIGHT)
+        self.board = Board(SWIDTH, SHEIGHT, WIDTH, HEIGHT)
         self.players = [Player(True), Player(False)]
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -29,6 +29,7 @@ class Player:
         return None
 
     def draw_possible_moves(self, win, board):
+        xoff, yoff = board.rect[0]
         if self.locked_piece is None:
             return
         else:
@@ -38,7 +39,7 @@ class Player:
                     w, h = 8, 8
                     tr, tc = to_pos
                     tx, ty = tc * board.cell_w + board.cell_w//2 - w//2, tr * board.cell_h + board.cell_h//2 - h//2
-                    rect = pygame.rect.Rect(tx, ty, w, h)
+                    rect = pygame.rect.Rect(tx + xoff, ty + yoff, w, h)
                     pygame.draw.rect(win, (0, 255, 0), rect, 0)
 
     def is_legal_move(self, to_pos):

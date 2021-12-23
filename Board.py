@@ -6,6 +6,19 @@ class Piece:
         self.is_king = is_king
         self.cap = cap
         self.pos = pos
+        self.im_path = self.get_img_path()
+
+    def get_img_path(self):
+        if self.red:
+            if self.is_king:
+                return 'regking.png'
+            else:
+                return 'red.png'
+        else:
+            if self.is_king:
+                return 'blueking.png'
+            else:
+                return 'blue.png'
 
     def get_diag_positions(self, board):
         r, c = self.pos
@@ -15,11 +28,11 @@ class Piece:
                 pos.append((r - 1, c - 1))
             if c < 7:
                 pos.append((r - 1, c + 1))
-        '''if self.is_king and r < 7:
+        if self.is_king and r < 7:
             if c > 0:
                 pos.append((r + 1, c - 1))
             if c < 7:
-                pos.append((r + 1, c + 1))'''
+                pos.append((r + 1, c + 1))
         return pos
 
     def get_elim_path(self, board, from_pos, to_pos):
@@ -59,21 +72,35 @@ class Piece:
                 moves.append(move)
         return moves
 
-    def draw(self, win, cell_w, cell_h):
+    def draw(self, win, cell_w, cell_h, xoff, yoff):
         if not self.cap:
-            color = (255, 0, 0) if self.red else (0, 0, 255)
+            img = pygame.image.load(self.im_path)
+            '''color = (255, 0, 0) if self.red else (0, 0, 255)
+            color = (255,255,255) if self.is_king else color'''
             r, c = self.pos
             x, y = c * cell_w + 1, r * cell_h + 1
             w, h = cell_w - 2, cell_h - 2
-            pygame.draw.rect(win, color, pygame.rect.Rect(x, y, w, h), 0)
+            #pygame.draw.rect(win, color, pygame.rect.Rect(x + xoff, y + yoff, w, h), 0)
+            win.blit(img, (x + xoff, y + yoff))
 
 
 class Board:
-    def __init__(self, w, h, board=None, pieces=None):
+    IMG_PATH = "board.png"
+    def __init__(self, sw, sh, w, h, board=None, pieces=None):
+        self.sw, self.sh = sw, sh
         self.w, self.h = w, h
         self.cell_w, self.cell_h = w // 8, h // 8
         self.pieces = set() if pieces is None else pieces
         self.board = self.init_board() if board is None else board
+        self.red_cap, self.blue_cap = 5, 14
+        self.rect = self.get_board_rect()
+
+    def get_board_rect(self):
+        topleft = ((self.sw - self.w) // 2, (self.sh - self.h) // 2)
+        topright = (topleft[0] + self.w, (self.sh - self.h) // 2)
+        botleft = (topleft[0], topright[0] + self.h)
+        botright = (topright[0], botleft[1])
+        return (topleft, topright, botleft, botright)
 
     def init_board(self):
         if self.pieces:
@@ -112,7 +139,7 @@ class Board:
                 pieces.add(comp_piece)
             else:
                 board[comp_pos] = None
-        return Board(self.w, self.h, board, pieces)
+        return Board(self.sw, self.sh, self.w, self.h, board, pieces)
 
 
     def move_piece(self, from_pos, to_pos, comp=False):
@@ -132,32 +159,52 @@ class Board:
             print(f'move from {from_pos} to {to_pos}')
 
     def draw(self, win):
-        for r, c in self.board:
+        img = pygame.image.load(self.IMG_PATH)
+        topleft = self.rect[0]
+        xoff, yoff = topleft
+        '''for r, c in self.board:
             x, y = c * self.cell_w + 1, r * self.cell_h + 1
             w, h = self.cell_w - 2, self.cell_h - 2
-            pygame.draw.rect(win, (0, 0, 0), pygame.rect.Rect(x, y, w, h), 0)
+            pygame.draw.rect(win, (0, 0, 0), pygame.rect.Rect(xoff + x, yoff + y, w, h), 0)'''
+        win.blit(img, (xoff, yoff))
 
         for piece in self.pieces:
-            piece.draw(win, self.cell_w, self.cell_h)
+            piece.draw(win, self.cell_w, self.cell_h, xoff, yoff)
 
     def capture_piece(self, pos, comp=False):
         if comp:
             actual_pos = self.get_comp_pos(pos)
             print(actual_pos, self.board[pos])
             piece = self.board[actual_pos]
+            if piece.red:
+                self.red_cap += 1
+            else:
+                self.blue_cap += 1
             self.board[pos] = None
             piece.cap = True
         else:
             print(pos, self.board[pos])
             piece = self.board[pos]
+            if piece.red:
+                self.red_cap += 1
+            else:
+                self.blue_cap += 1
             self.board[pos] = None
             piece.cap = True
+
+    def is_terminal(self):
+        return self.red_cap >= 16 or self.blue_cap >= 16
+
+    def get_winner(self):
+        return 'red' if self.blue_cap >= 16 else 'blue'
 
 def update_kings_by_position(board):
     for pos in board.board:
         piece = board.board[pos]
         if isinstance(piece, Piece):
-            if piece.red and piece.pos[0] == 0:
+            if piece.red and piece.pos[0] == 0 and board.red_cap > 0:
                 piece.is_king = True
-            elif not piece.red and piece.pos[0] == 7:
+                board.red_cap -= 1
+            elif not piece.red and piece.pos[0] == 7 and board.blue_cap > 0:
                 piece.is_king = True
+                board.blue_cap -= 1
