@@ -25,6 +25,8 @@ class ServerInstance:
         self.game_winner = None
         self.players = self.make_players()
 
+        self.id_locked = [False, False]
+
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self.sock.bind((self.ADDR, self.PORT))
@@ -103,18 +105,26 @@ class ServerInstance:
                 else:
                     print(f"Connection with tid = {id} broken.")
                     self.players[id].connected = False
+                    self.id_locked[id] = False
                     break
             except:
                 break
 
     def listen(self):
         self.sock.listen(self.NUM_PLAYERS)
-        id = 0
+        id = None
         while True:
             conn, addr = self.sock.accept()
+            if not self.id_locked[0]:
+                self.id_locked[0] = True
+                id = 0
+            elif not self.id_locked[1]:
+                self.id_locked[1] = True
+                id = 1
             self.players[id].connected = True
+            print(id)
             _thread.start_new_thread(self.client_thread, (conn, id))
-            id += 1
+            #id += 1
 
 if __name__ == "__main__":
     server = ServerInstance()

@@ -1,10 +1,3 @@
-#TODO: Hud system: countdown timer for turn?
-#TODO: Make a better terminal state. Detect wins before all pieces captured if opponent cant move.
-#TODO: Add some serverside locking functionality. Maybe if player joins, automatically refresh. Make sure player cant play before both loaded in. Make sure players cant play after game ends
-#TODO: Game restart/rematch system? If both players agree and are still connected, restart the game.
-
-
-
 import pygame
 from Board import *
 from Player import *
