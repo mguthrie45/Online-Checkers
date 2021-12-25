@@ -6,7 +6,6 @@ class Player:
         self.connected = False
         self.red = red
         self.is_turn = True if self.red else False
-       # self.is_turn = True
 
         self.locked_piece = None
         self.locked_possible_moves = []
