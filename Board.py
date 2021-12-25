@@ -82,7 +82,7 @@ class Piece:
 
 class Board:
     IMG_PATH = "board.png"
-    NUM_PLAYER_PIECES = 1
+    NUM_PLAYER_PIECES = 8
     def __init__(self, sw, sh, w, h, board=None, pieces=None, red_cap=0, blue_cap=0):
         self.sw, self.sh = sw, sh
         self.w, self.h = w, h
@@ -113,20 +113,17 @@ class Board:
         board = {}
         for r in range(8):
             for c in range(8):
-                '''if r == 0 and c % 2 == 0 or r == 1 and c % 2 == 1:
+                if r == 0 and c % 2 == 0 or r == 1 and c % 2 == 1:
                     piece = Piece(False, False, (r, c))
                     board[(r, c)] = piece
                     self.pieces.add(piece)
-                if r == 6 and c % 2 == 1 or r == 7 and c % 2 == 0:
+                elif r == 6 and c % 2 == 1 or r == 7 and c % 2 == 0:
                     piece = Piece(True, False, (r, c))
                     board[(r, c)] = piece
                     self.pieces.add(piece)
-                else:'''
-                board[(r, c)] = None
-        board[(5,3)] = Piece(True, False, (5, 3))
-        self.pieces.add(board[(5,3)])
-        board[(4, 2)] = Piece(False, False, (4, 2))
-        self.pieces.add(board[(4,2)])
+                else:
+                    board[(r, c)] = None
+        print(len(self.pieces))
         return board
 
     def get_comp_pos(self, pos):
@@ -144,6 +141,7 @@ class Board:
                 pieces.add(comp_piece)
             else:
                 board[comp_pos] = None
+            print(len(pieces))
         return Board(self.sw, self.sh, self.w, self.h, board, pieces, self.red_cap, self.blue_cap)
 
 
@@ -198,7 +196,6 @@ class Board:
             piece.cap = True
 
     def is_terminal(self):
-        print(self.red_cap, self.blue_cap)
         return self.red_cap >= self.NUM_PLAYER_PIECES or self.blue_cap >= self.NUM_PLAYER_PIECES
 
     def get_winner(self):
@@ -217,5 +214,4 @@ def update_kings_by_position(board):
 
 def check_for_win(board):
     if board.is_terminal():
-        print('terminal')
         return board.get_winner()
