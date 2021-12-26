@@ -117,13 +117,12 @@ class Board:
                     piece = Piece(False, False, (r, c))
                     board[(r, c)] = piece
                     self.pieces.add(piece)
-                elif r == 6 and c % 2 == 1 or r == 7 and c % 2 == 0:
+                elif r == 6 and c % 2 == 0 or r == 7 and c % 2 == 1:
                     piece = Piece(True, False, (r, c))
                     board[(r, c)] = piece
                     self.pieces.add(piece)
                 else:
                     board[(r, c)] = None
-        print(len(self.pieces))
         return board
 
     def get_comp_pos(self, pos):
@@ -141,7 +140,6 @@ class Board:
                 pieces.add(comp_piece)
             else:
                 board[comp_pos] = None
-            print(len(pieces))
         return Board(self.sw, self.sh, self.w, self.h, board, pieces, self.red_cap, self.blue_cap)
 
 

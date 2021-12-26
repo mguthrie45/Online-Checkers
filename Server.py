@@ -122,9 +122,7 @@ class ServerInstance:
                 self.id_locked[1] = True
                 id = 1
             self.players[id].connected = True
-            print(id)
             _thread.start_new_thread(self.client_thread, (conn, id))
-            #id += 1
 
 if __name__ == "__main__":
     server = ServerInstance()

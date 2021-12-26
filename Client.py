@@ -37,7 +37,6 @@ def main():
     while True:
         game_state = send_self_to_server(net, player_self)
         player_self, player_other, board, game_winner = game_state['self'], game_state['other'], game_state['board'], game_state['game_winner']
-        print(len(board.pieces))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -52,7 +51,6 @@ def main():
                     player_self.rematch = True
 
         if player_self.connected and player_other.connected and game_winner is None:
-            print(player_self.rematch)
             win.fill(BACKGROUND_COLOR)
             hud.draw(win, board)
             board.draw(win)
