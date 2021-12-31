@@ -6,12 +6,11 @@ class Piece:
         self.is_king = is_king
         self.cap = cap
         self.pos = pos
-        self.im_path = self.get_img_path()
 
     def get_img_path(self):
         if self.red:
             if self.is_king:
-                return 'regking.png'
+                return 'redking.png'
             else:
                 return 'red.png'
         else:
@@ -38,7 +37,7 @@ class Piece:
     def get_elim_path(self, board, from_pos, to_pos):
         piece = board.board[to_pos]
         if isinstance(piece, Piece) and piece.red is not self.red:
-            skip_pos = (to_pos[0] - 1, to_pos[1] + (to_pos[1] - from_pos[1]))
+            skip_pos = (to_pos[0] + (to_pos[0] - from_pos[0]), to_pos[1] + (to_pos[1] - from_pos[1]))
             if skip_pos not in board.board:
                 return [], []
             if board.board[skip_pos] is None or board.board[skip_pos].cap:
@@ -50,8 +49,8 @@ class Piece:
                     path, kills = piece_copy.get_elim_path(board, skip_pos, tpos)
                     possible_paths.append(path)
                     possible_kills.append(kills)
-                trace = [skip_pos] + max(possible_paths, key=lambda x: len(x))
-                kills = [piece] + max(possible_kills, key=lambda x: len(x))
+                trace = [skip_pos] + max(possible_paths, key=lambda x: len(x)) if possible_paths else [skip_pos]
+                kills = [piece] + max(possible_kills, key=lambda x: len(x)) if possible_kills else [piece]
                 return trace, kills
             else:
                 return [], []
@@ -73,7 +72,8 @@ class Piece:
 
     def draw(self, win, cell_w, cell_h, xoff, yoff):
         if not self.cap:
-            img = pygame.image.load(self.im_path)
+            path = self.get_img_path()
+            img = pygame.image.load(path)
             r, c = self.pos
             x, y = c * cell_w + 1, r * cell_h + 1
             w, h = cell_w - 2, cell_h - 2
@@ -203,12 +203,10 @@ def update_kings_by_position(board):
     for pos in board.board:
         piece = board.board[pos]
         if isinstance(piece, Piece):
-            if piece.red and piece.pos[0] == 0 and board.red_cap > 0:
+            if piece.red and piece.pos[0] == 0:
                 piece.is_king = True
-                board.red_cap -= 1
-            elif not piece.red and piece.pos[0] == 7 and board.blue_cap > 0:
+            elif not piece.red and piece.pos[0] == 7:
                 piece.is_king = True
-                board.blue_cap -= 1
 
 def check_for_win(board):
     if board.is_terminal():
