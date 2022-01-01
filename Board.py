@@ -34,19 +34,21 @@ class Piece:
                 pos.append((r + 1, c + 1))
         return pos
 
-    def get_elim_path(self, board, from_pos, to_pos):
+    def get_elim_path(self, board, from_pos, to_pos, vis):
         piece = board.board[to_pos]
-        if isinstance(piece, Piece) and piece.red is not self.red:
+        if isinstance(piece, Piece) and piece.red is not self.red and to_pos not in vis:
+            vis.add(to_pos)
             skip_pos = (to_pos[0] + (to_pos[0] - from_pos[0]), to_pos[1] + (to_pos[1] - from_pos[1]))
             if skip_pos not in board.board:
                 return [], []
-            if board.board[skip_pos] is None or board.board[skip_pos].cap:
+            if (board.board[skip_pos] is None or board.board[skip_pos].cap) and skip_pos not in vis:
+                vis.add(skip_pos)
                 piece_copy = Piece(self.red, self.is_king, skip_pos)
                 diag_moves = piece_copy.get_diag_positions(board)
                 possible_paths = []
                 possible_kills = []
                 for tpos in diag_moves:
-                    path, kills = piece_copy.get_elim_path(board, skip_pos, tpos)
+                    path, kills = piece_copy.get_elim_path(board, skip_pos, tpos, vis)
                     possible_paths.append(path)
                     possible_kills.append(kills)
                 trace = [skip_pos] + max(possible_paths, key=lambda x: len(x)) if possible_paths else [skip_pos]
@@ -65,7 +67,7 @@ class Piece:
             if b[to_pos] is None or b[to_pos].cap:
                 moves.append({'to': [to_pos], 'kill': []})
             elif isinstance(b[to_pos], Piece) and b[(r, c)].red is not b[to_pos].red:
-                path, kills = self.get_elim_path(board, self.pos, to_pos)
+                path, kills = self.get_elim_path(board, self.pos, to_pos, {self.pos})
                 move = {'to': path, 'kill': kills}
                 moves.append(move)
         return moves
