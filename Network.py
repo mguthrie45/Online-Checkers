@@ -3,7 +3,7 @@ import json
 import pickle
 
 class ServerConnection:
-    ADDR = "192.168.1.224"
+    ADDR = "192.168.1.189"
     PORT = 5555
     def __init__(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -18,7 +18,7 @@ def update_player_info(server, player, uplayer):
 
 class ServerInstance:
     NUM_PLAYERS = 2
-    ADDR = "192.168.1.224"
+    ADDR = "192.168.1.189"
     PORT = 5555
     def __init__(self):
         self.board = self.make_new_board()
